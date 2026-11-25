@@ -1,0 +1,6 @@
+{
+  "name": "My Spare Zone",
+  "description": "Automotive spare parts storefront and admin inventory portal for body parts, electricals, and mechanical parts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
