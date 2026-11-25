@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="112" fill="#111C2E" />
+  <!-- Outer machined timing gear -->
+  <path
+    d="M226 68h60l11 44c13 3 25 8 36 15l39-22 42 42-22 39c7 11 12 23 15 36l44 11v60l-44 11c-3 13-8 25-15 36l22 39-42 42-39-22c-11 7-23 12-36 15l-11 44h-60l-11-44c-13-3-25-8-36-15l-39 22-42-42 22-39c-7-11-12-23-15-36l-44-11v-60l44-11c3-13 8-25 15-36l-22-39 42-42 39 22c11-7 23-12 36-15l11-44z"
+    fill="#CBD5E1"
+  />
+  <!-- Cobalt inner caliper ring -->
+  <circle cx="256" cy="256" r="134" fill="#1D4ED8" />
+  <!-- Safety orange brake rotor / hub ring -->
+  <circle cx="256" cy="256" r="110" fill="#EA580C" />
+  <!-- Dark machined hub -->
+  <circle cx="256" cy="256" r="76" fill="#111C2E" />
+  <!-- Crossed mechanic wrench -->
+  <path
+    d="M196 174l20 20a34 34 0 0 0 40 40l94 94a22 22 0 1 1-31 31l-94-94a34 34 0 0 0-40-40l-20-20 31-31z"
+    fill="#F8FAFC"
+  />
+  <circle cx="256" cy="256" r="20" fill="#FACC15" />
+</svg>
