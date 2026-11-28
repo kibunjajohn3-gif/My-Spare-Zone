@@ -7,6 +7,7 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer, WebSocket } from 'ws';
+import { Pool } from 'pg';
 import {
   PRIVACY_POLICY_EFFECTIVE_DATE,
   PRIVACY_POLICY_INTRO,
@@ -27,6 +28,43 @@ const DATA_DIR = process.env.DATA_DIR?.trim()
   : path.resolve(__dirname, 'data');
 const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 const STORE_PATH = path.join(DATA_DIR, 'store.json');
+const DATABASE_URL = process.env.DATABASE_URL?.trim();
+const pgPool = DATABASE_URL
+  ? new Pool({
+      connectionString: DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+    })
+  : null;
+
+async function loadStoreFromDb() {
+  if (!pgPool) return;
+  try {
+    await pgPool.query(
+      `CREATE TABLE IF NOT EXISTS app_store (id INT PRIMARY KEY, data JSONB NOT NULL, updated_at TIMESTAMPTZ DEFAULT NOW())`
+    );
+    const r = await pgPool.query(`SELECT data FROM app_store WHERE id = 1`);
+    if (r.rows[0]?.data) {
+      ensureStorageDirs();5
+      fs.writeFileSync(STORE_PATH, JSON.stringify(r.rows[0].data), 'utf-8');
+      console.log('[store] Restored from Postgres');
+    }
+  } catch (e) {
+    console.error('[store] Postgres load failed, using file:', e);
+  }
+}
+
+async function saveStoreToDb(data: StoreData) {
+  if (!pgPool) return;
+  try {
+    await pgPool.query(
+      `INSERT INTO app_store (id, data) VALUES (1, $1)
+       ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data, updated_at = NOW()`,
+      [JSON.stringify(data)]
+    );
+  } catch (e) {
+    console.error('[store] Postgres save failed:', e);
+  }
+}
 const IMAGES_DIR = path.resolve(__dirname, 'src/assets/images');
 
 const SHOP_NAME = 'My Spare Zone';
@@ -1504,6 +1542,8 @@ function writeStore(data: StoreData) {
   const tempPath = `${STORE_PATH}.tmp`;
   fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
   fs.renameSync(tempPath, STORE_PATH);
+    // Also persist to Postgres — fire and forget, don't block the request
+      saveStoreToDb(data).catch(() => {});
 }
 
 function saveBase64Image(dataUrl: string): string | null {
