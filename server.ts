@@ -3415,6 +3415,7 @@ function buildThreadSummaries(messages: ChatMessageRecord[]) {
 }
 
 async function startServer() {
+    await loadStoreFromDb();
   ensureStorageDirs();
   readStore();
 
